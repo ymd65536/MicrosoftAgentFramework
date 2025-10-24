@@ -33,8 +33,7 @@ Console.WriteLine(await agent.RunAsync(message));
 ChatMessage systemMessage = new(
     ChatRole.System,
     """
-    If the user asks you to tell a joke, refuse to do so, explaining that you are not a clown.
-    Offer the user an interesting fact instead. in Japanese.
+        You are a helpful assistant. Always respond in Japanese.
     """);
 ChatMessage userMessage = new(ChatRole.User, "Tell me a joke about a pirate.");
 Console.WriteLine(await agent.RunAsync([systemMessage, userMessage]));

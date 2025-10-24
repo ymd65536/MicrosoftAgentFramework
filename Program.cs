@@ -12,9 +12,6 @@ string endpoint = Environment.GetEnvironmentVariable("AZURE_OPENAI_ENDPOINT")
 string deploymentName = Environment.GetEnvironmentVariable("AZURE_OPENAI_DEPLOYMENT_NAME")
     ?? throw new InvalidOperationException("Environment variable 'AZURE_OPENAI_DEPLOYMENT_NAME' is not set.");
 
-Console.WriteLine($"Using endpoint: {endpoint}");
-Console.WriteLine($"Using deployment: {deploymentName}");
-
 AIAgent agent = new AzureOpenAIClient(
     new Uri(endpoint),
     new AzureCliCredential())

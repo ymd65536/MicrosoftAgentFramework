@@ -12,7 +12,7 @@ using Microsoft.Extensions.AI.Evaluation.Quality;
 using Microsoft.Extensions.AI.Evaluation.Reporting;
 using Microsoft.Extensions.AI.Evaluation.Reporting.Storage;
 
-using Microsoft.ML.Tokenizers;
+// using Microsoft.ML.Tokenizers;
 
 string endpoint = Environment.GetEnvironmentVariable("AZURE_OPENAI_ENDPOINT")
     ?? throw new InvalidOperationException("Environment variable 'AZURE_OPENAI_ENDPOINT' is not set.");
@@ -35,13 +35,17 @@ ChatMessage message = new(ChatRole.User, [
 Console.WriteLine(await agent.RunAsync(message));
 */
 
+string chatSystemMessage = "You are a helpful assistant. Always respond in Japan.";
+string userMessageContent = "Tell me a joke about a pirate.";
+
 ChatMessage systemMessage = new(
     ChatRole.System,
-    """
-        You are a helpful assistant. Always respond in Japanese.
-    """);
-ChatMessage userMessage = new(ChatRole.User, "Tell me a joke about a pirate.");
-Console.WriteLine(await agent.RunAsync([systemMessage, userMessage]));
+    chatSystemMessage);
+ChatMessage userMessage = new(ChatRole.User, userMessageContent);
+
+var response = await agent.RunAsync([systemMessage, userMessage]);
+
+Console.WriteLine(response);
 
 // 評価を実行する
 // HateAndUnfairnessEvaluatorはAzure AI Content Safetyサービスが必要なため、
@@ -77,11 +81,11 @@ await using var scenario = await reportingConfiguration.CreateScenarioRunAsync("
 EvaluationResult evaluationResult = await scenario.EvaluateAsync(
     // チャットのインプット
     [
-        new ChatMessage(ChatRole.System, "あなたは猫型アシスタントです。猫らしく振舞うために語尾を「にゃん」にしてください。"),
-        new ChatMessage(ChatRole.User, "今日の品川の天気は？"),
+        new ChatMessage(ChatRole.System, chatSystemMessage),
+        new ChatMessage(ChatRole.User, userMessageContent),
     ],
     // 結果
-    new ChatResponse(new ChatMessage(ChatRole.Assistant, "今日の広島のお昼ご飯はお好み焼きだよ！"))
+    new ChatResponse(new ChatMessage(ChatRole.Assistant, response.ToString()))
 );
 
 // evaluationResult からメッセージを取り出す
